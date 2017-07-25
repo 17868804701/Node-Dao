@@ -9,11 +9,10 @@ var setting = require('../setting');
 function _connectDB(callback) {
     // Connection URL
     var url = setting.dburl;
-
     MongoClient.connect(url, function (err, db) {
         console.log("数据库连接成功");
         if (err) {
-            callback(err, db);
+            callback(err, null);
             return;
         }
         callback(err, db);
@@ -30,9 +29,9 @@ exports.insertOne = function (collectionName, json, callback) {
 };
 
 // 查找数据,args是一个对象{"pageamount":2,"page":page}
-exports.find = function (collectionName, json, args, C, D) {
+exports.find = function (collectionName,json,C,D) {
     var result = [];   //返回结果的数组
-    if (arguments.length != 3) {
+    if (arguments.length == 3) {
         var callback = C;
         var skip = 0;
         var limit = 0;
@@ -40,15 +39,17 @@ exports.find = function (collectionName, json, args, C, D) {
         var callback = D;
         var args = C;
         //应该省略的条数
-        var skip = args.pageamount * args.page;
+        var skip = args.pageamount * args.page||0;
         //数目限制数
-        var limit = args.pageamount;
+        var limit = args.pageamount||0;
+        // 排序
+        var sort = args.sort||{}
     } else {
         throw new Error("find函数的参数必须是三个或四个");
         return;
     }
     _connectDB(function (err, db) {
-        var cursor = db.collection(collectionName).find(json).skip(skip).limit(limit);
+        var cursor = db.collection(collectionName).find(json).skip(skip).limit(limit).sort(sort);
         cursor.each(function (err, doc) {
             if (err) {
                 callback(err, null);
@@ -87,5 +88,15 @@ exports.updateMany = function (collectionName, json1, json2, callback) {
                 callback(err, results);
                 db.close();
             });
+    })
+};
+
+//获取总数
+exports.getAllCount = function (collectionName,callback) {
+    _connectDB(function (err, db) {
+        db.collection(collectionName).count({}).then(function(count) {
+            callback(count);
+            db.close();
+        });
     })
 };

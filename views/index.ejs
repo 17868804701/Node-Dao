@@ -1,11 +1,113 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>留言板</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .row h4 {
+            text-align: center;
+        }
+        .liuyankuai{
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+<h1>我的留言本</h1>
+
+<div class="container">
+    <div class="row">
+        <form class="form-horizontal col-lg-6">
+            <div class="form-group">
+                <label for="xingming" class="col-sm-2 control-label">姓名</label>
+
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="xingming" name="xingming" placeholder="姓名">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="liuyan" class="col-sm-2 control-label">留言</label>
+
+                <div class="col-sm-10">
+                    <textarea class="form-control" rows="3" name="liuyan" id="liuyan"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button id="tijiao" type="button" class="btn btn-success">提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <nav>
+        <ul class="pagination">
+            <% for(var i = 1 ; i <= pageamount ; i++){%>
+            <li class="yemaanniu" data-page="<%=i%>"><a href="#"><%=i%></a></li>
+            <%}%>
+        </ul>
+    </nav>
+    <div id="quanbuliuyan">
+
+    </div>
+</div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery-2.1.4.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+
+        //给第一个页码，补一个active
+        $(".yemaanniu:first").addClass("active");
+
+        //给所有的页码按钮，添加监听
+        $(".yemaanniu").click(function(){
+            nowpage =  parseInt($(this).attr("data-page"));
+            //重新发起请求，即可
+            getData(nowpage);
+            $(this).addClass("active").siblings().removeClass("active");
+        });
+        //默认请求第一页数据
+        getData(1);
+        $("#tijiao").click(function () {
+            $.post("/tijiao", {
+                "xingming": $("#xingming").val(),
+                "liuyan": $("#liuyan").val(),
+                "shijian":new Date()
+            }, function (result) {
+
+            })
+            window.location='/'
+        })
+        //显示留言列表
+        function getData(page) {
+            $.get('/find?page='+(page-1), function (result) {
+                console.log(result)
+                var liuyan = '';
+                $("#quanbuliuyan").html("");
+                for (var i = 0; i < result.result.length; i++) {
+                    liuyan +='<div class="liuyankuai">'+
+                        '<p>【姓名】:'+result.result[i].xingming+'</p>'+
+                        ' <p>【留言】:'+result.result[i].liuyan+'</p>'+
+                        ' <p>【时间】:'+result.result[i].shijian+'</p>'+
+//                ' <p><a href="/shanchu?id={{=id}}" class="shanchu">删除</a></p>'+
+                        ' </div>'
+                }
+                $("#quanbuliuyan").append(liuyan);
+            })
+        }
+
+    })
+</script>
+</body>
 </html>
