@@ -35,7 +35,6 @@ app.get('/del',function (req,res,next) {
    })
 });
 
-
 app.post('/tijiao', function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields) {
