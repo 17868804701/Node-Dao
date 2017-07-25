@@ -5,6 +5,7 @@ var express = require('express');
 var app = express();
 var db = require('./model/db.js');
 var formidable = require('formidable');
+var ObjectId = require('mongodb').ObjectID;
 
 //设置模板引擎
 app.set("view engine", "ejs");
@@ -29,13 +30,8 @@ app.get('/find',function (req,res,next) {
 app.get('/del',function (req,res,next) {
     var id = req.query.id;
     console.log(id);
-   db.deleteMany('message',{"_id":id},function (err,result) {
-       if(err){
-           console.log(err);
-           res.json('-1');
-           return;
-       }
-       res.end('删除成功');
+   db.deleteMany('message',{"_id":ObjectId(id)},function (err,result) {
+       res.redirect('/')
    })
 });
 
