@@ -77,7 +77,7 @@
                 "liuyan": $("#liuyan").val(),
                 "shijian":new Date()
             }, function (result) {
-
+                alert("提交成功")
             })
             window.location='/'
         })
@@ -92,7 +92,7 @@
                         '<p>【姓名】:'+result.result[i].xingming+'</p>'+
                         ' <p>【留言】:'+result.result[i].liuyan+'</p>'+
                         ' <p>【时间】:'+result.result[i].shijian+'</p>'+
-//                ' <p><a href="/shanchu?id={{=id}}" class="shanchu">删除</a></p>'+
+                        '<p><a href="/del?id='+result.result[i]._id+'" class="shanchu">删除</a></p>'+
                         ' </div>'
                 }
                 $("#quanbuliuyan").append(liuyan);

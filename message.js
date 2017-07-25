@@ -17,13 +17,28 @@ app.get('/', function (req, res, next) {
         });
     });
 });
-
+//查询遍历
 app.get('/find',function (req,res,next) {
     var page = parseInt(req.query.page);
     db.find('message',{},{"sort":{"shijian":-1},"pageamount":4,"page":page},function (err,result) {
         res.json({"result":result});
     });
 });
+
+// 删除
+app.get('/del',function (req,res,next) {
+    var id = req.query.id;
+    console.log(id);
+   db.deleteMany('message',{"_id":id},function (err,result) {
+       if(err){
+           console.log(err);
+           res.json('-1');
+           return;
+       }
+       res.end('删除成功');
+   })
+});
+
 
 app.post('/tijiao', function (req, res, next) {
     var form = new formidable.IncomingForm();
