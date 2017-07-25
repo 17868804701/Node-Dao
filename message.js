@@ -8,7 +8,6 @@ var formidable = require('formidable');
 
 //设置模板引擎
 app.set("view engine", "ejs");
-
 app.use(express.static('./public'));
 
 app.get('/', function (req, res, next) {
@@ -43,7 +42,6 @@ app.post('/tijiao', function (req, res, next) {
                 res.json('1');
             })
     })
-
 });
 
 app.listen(3000);
